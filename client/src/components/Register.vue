@@ -1,10 +1,7 @@
 <template>
   <v-layout column>
     <v-flex xs6 offset-xs3>
-      <!-- <panel title="Register"> -->
-        <v-toolbar dark color="primary">
-          <v-toolbar-title class="gray--text">Register</v-toolbar-title>
-        </v-toolbar>
+      <panel title="Register">
         <form 
           name="tab-tracker-form"
           autocomplete="off">
@@ -29,15 +26,19 @@
           @click="register">
           Register
         </v-btn>
-      <!-- </panel> -->
+      </panel>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import Panel from '@/components/Panel'
 import AuthenticationService from '@/services/AuthenticationService'
 
 export default {
+  components: {
+    Panel
+  },
   data () {
     return {
       email: '',
@@ -48,10 +49,12 @@ export default {
   methods: {
     async register () {
       try {
-        await AuthenticationService.register({
+        const response = await AuthenticationService.register({
           email: this.email,
           password: this.password
         })
+        this.$store.dispatch('setToken', response.data.token)
+        this.$store.dispatch('setUser', response.data.user)
       } catch (error) {
         this.error = error.response.data.error
       }
